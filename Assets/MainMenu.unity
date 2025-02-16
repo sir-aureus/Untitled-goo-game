@@ -834,36 +834,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3312172420877395626, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 507431948}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
 --- !u!224 &507431946 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 788291871807787190, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
   m_PrefabInstance: {fileID: 507431945}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &507431947 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3312172420877395626, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
-  m_PrefabInstance: {fileID: 507431945}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &507431948
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 507431947}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b0f00a7e1790164b8de4602ce0a3e4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _event:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &538775346
 GameObject:
   m_ObjectHideFlags: 0
@@ -2442,36 +2419,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3312172420877395626, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1691498000}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
 --- !u!224 &1691497998 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 788291871807787190, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
   m_PrefabInstance: {fileID: 1691497997}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1691497999 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3312172420877395626, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
-  m_PrefabInstance: {fileID: 1691497997}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1691498000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1691497999}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b0f00a7e1790164b8de4602ce0a3e4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _event:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1001 &1851016333
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2631,36 +2585,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3312172420877395626, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1851016336}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
 --- !u!224 &1851016334 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 788291871807787190, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
   m_PrefabInstance: {fileID: 1851016333}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1851016335 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3312172420877395626, guid: cfb1e9708e86da6499b4d648c4a1c6ad, type: 3}
-  m_PrefabInstance: {fileID: 1851016333}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1851016336
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1851016335}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b0f00a7e1790164b8de4602ce0a3e4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _event:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1001 &2837566879083944079
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -36,6 +36,8 @@ public class GooyoController : MonoBehaviour
     
     public int shuffleColorCount = 3;
 
+    public bool disableClicks = false;
+
     // runtime state
     protected bool paused = false;
 
@@ -89,11 +91,17 @@ public class GooyoController : MonoBehaviour
 
         this.polyQueue = new List<Polyomino>();
         this.generateNewQueue();
+        this.disableClicks = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (this.paused)
+        {
+            return;
+        }
+
         if (this.gameState == GameState.Spawn)
         {
             this.currentPolyomino = this.polyQueue[0];
@@ -120,7 +128,8 @@ public class GooyoController : MonoBehaviour
         else if (this.gameState == GameState.Holding)
         {
             this.gameTick += Math.Min(Time.deltaTime, 1f/30f);
-            bool click = (this.gameTick >= this.holdTimeLimit && this.holdTimeLimit > 0) || Input.GetMouseButtonDown(0);
+            bool click = (this.gameTick >= this.holdTimeLimit && this.holdTimeLimit > 0)
+                || (!this.disableClicks && Input.GetMouseButtonDown(0));
 
             int x = this.getGridXFromMouse();
             int y = this.tilesVert - this.currentPolyomino.getHeight();
@@ -367,5 +376,10 @@ public class GooyoController : MonoBehaviour
         }
         
         return shouldFall;
+    }
+
+    public void togglePause()
+    {
+        this.paused = !this.paused;
     }
 }

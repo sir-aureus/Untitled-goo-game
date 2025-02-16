@@ -1,0 +1,248 @@
+using UnityEngine;
+using UnityEngine.Tilemaps;
+
+public class Polyomino : MonoBehaviour
+{
+    public Tilemap myGrid;
+    public RuleTile myRuleTile;
+
+    public GooyoController controller;
+
+    public bool falling = false;
+
+    public int getWidth()
+    {
+        return this.maxX - this.minX + 1;
+    }
+
+    public int getHeight()
+    {
+        return this.maxY - this.minY + 1;
+    }
+
+    protected bool[,] shape;
+    protected int gridX, gridY;
+    protected int minX = 0, maxX = 0, minY = 0, maxY = 0;
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        this.init();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+       
+    }
+
+    public void init()
+    {
+        if (this.shape == null)
+        {
+            this.shape = new bool[1,1];
+            this.shape[0,0] = true;
+        }
+    }
+
+    // updates the polyomino's position on the grid; if the new position is invalid, returns false and reverts
+    public bool setGridPosition(int gridX, int gridY, bool force = false)
+    {
+        int centerX = this.minX;
+        int centerY = this.minY;
+        Debug.Log("bounds: " + this.minX + ", " + this.maxX + ", " + this.minY + ", " + this.maxY);
+        int lastGridX = this.gridX, lastGridY = this.gridY;
+        this.gridX = gridX;
+        this.gridY = gridY;
+
+        bool valid = true;
+
+        var gameGrid = this.controller.getGameGrid();
+
+        for (int i = this.minX; i <= this.maxX; i++)
+        {
+            for (int j = this.minY; j <= this.maxY; j++)
+            {
+                if (this.shape[i,j])
+                {
+                    int x = this.gridX - centerX + i;
+                    int y = this.gridY - centerY + j;
+                    Debug.Log("i: " + i + ", j: " + j);
+                    Debug.Log("x: " + x + ", y: " + y);
+                    if (x < 0 || x >= gameGrid.GetLength(0) || y < 0 || y >= gameGrid.GetLength(1))
+                    {
+                        valid = false;
+                        Debug.Log("out of bounds");
+                        break;
+                    }
+                    if (gameGrid[x, y] != null && gameGrid[x, y] != this)
+                    {
+                        valid = false;
+                        Debug.Log("occupied");
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!valid && !force)
+        {
+            this.gridX = lastGridX;
+            this.gridY = lastGridY;
+            return false;
+        }
+        else
+        {
+            // // remove the polyomino from the grid
+            for (int i = 0; i < gameGrid.GetLength(0); i++)
+            {
+                for (int j = 0; j < gameGrid.GetLength(1); j++)
+                {
+                    if (gameGrid[i,j] == this)
+                    {
+                        gameGrid[i,j] = null;
+                    }
+                }
+            }
+
+            // add the polyomino to the grid in the new position
+            for (int i = minX; i <= maxX; i++)
+            {
+                for (int j = minY; j <= maxY; j++)
+                {
+                    if (this.shape[i,j])
+                    {
+                        int x = this.gridX - centerX + i;
+                        int y = this.gridY - centerY + j;
+                        Debug.Log("x: " + x + ", y: " + y);
+                        gameGrid[x, y] = this;
+                    }
+                }
+            }
+
+            // update position on screen
+
+            this.transform.position = this.controller.getGridOffset() + this.controller.getGridSpacingX() * (this.gridX - centerX) + this.controller.getGridSpacingY() * (this.gridY - centerY);
+
+            return true;
+        }        
+    }
+
+
+    public void setRandomShape()
+    {
+        int numTiles = Random.Range(2, 5);
+        this.shape = new bool[numTiles, numTiles];
+
+        int x = numTiles / 2, y = numTiles / 2;
+
+        this.minX = this.maxX = x;
+        this.minY = this.maxY = y;
+
+        this.shape[x, y] = true;
+
+        for (int count = 0; count < numTiles;)
+        {
+            x = Random.Range(0, numTiles);
+            y = Random.Range(0, numTiles);
+            
+            if (this.shape[x, y] == false)
+            {
+                bool valid = false;
+
+                if (x > 1 && this.shape[x-1, y] == true)
+                {
+                    valid = true;
+                }
+                else if (x < numTiles - 1 && this.shape[x+1, y] == true)
+                {
+                    valid = true;
+                }
+                else if (y > 1 && this.shape[x, y-1] == true)
+                {
+                    valid = true;
+                }
+                else if (y < numTiles - 1 && this.shape[x, y+1] == true)
+                {
+                    valid = true;
+                }
+
+                if (valid)
+                {
+                    this.shape[x, y] = true;
+                    count++;
+                    if (x < this.minX)
+                    {
+                        this.minX = x;
+                    }
+                    if (x > this.maxX)
+                    {
+                        this.maxX = x;
+                    }
+                    if (y < this.minY)
+                    {
+                        this.minY = y;
+                    }
+                    if (y > this.maxY)
+                    {
+                        this.maxY = y;
+                    }
+                }
+            }
+        }
+
+        this.applyShape();
+    }
+
+    protected void applyShape()
+    {
+        // Debug.Log("maxX: " + this.maxX + ", minX: " + this.minX + ", maxY: " + this.maxY + ", minY: " + this.minY);
+        int centerX = 0;//(this.maxX - this.minX + 1) / 2;
+        int centerY = 0;//(this.maxY - this.minY + 1) / 2;
+        for (int i = this.minX; i <= this.maxX; i++)
+        {
+            for (int j = this.minY; j <= this.maxY; j++)
+            {
+                if (this.shape[i,j])
+                {
+                    if (this.shape[i,j])
+                    {
+                        for (int subX = -1; subX <= 1; subX++)
+                        {
+                            for (int subY = -1; subY <= 1; subY++)
+                            {
+                                int x = (i - centerX) * 3 + subX;
+                                int y = (j - centerY) * 3 + subY;
+                                this.myGrid.SetTile(new Vector3Int(x, y, 0), this.myRuleTile);
+                            }
+                        }
+                    } 
+                }
+            }
+        }
+    }
+
+    public void setColorIndex(int colorIndex)
+    {
+
+    }
+
+    public bool rotate(bool clockwise)
+    {
+
+        return true;
+    }
+
+    public void moveHorizontal(int direction)
+    {
+
+    }
+
+    public bool fallOneTile()
+    {
+        bool valid = this.setGridPosition(this.gridX, this.gridY - 1);
+        
+        return valid;
+    }
+
+    // public void 
+}

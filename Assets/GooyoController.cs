@@ -13,7 +13,7 @@ public enum GameState
 public class GooyoController : MonoBehaviour
 {
     // settings
-    public GameObject polyominoPrefab;
+    public GameObject[] polyominoPrefabs;
     public GameObject background;
 
     public int tilesHoriz = 16;
@@ -78,7 +78,7 @@ public class GooyoController : MonoBehaviour
     {
         if (this.gameState == GameState.Spawn)
         {
-            this.currentPolyomino = Instantiate(this.polyominoPrefab, background.transform).GetComponent<Polyomino>();
+            this.currentPolyomino = Instantiate(this.polyominoPrefabs[Random.Range(0, this.polyominoPrefabs.GetLength(0)-1)], background.transform).GetComponent<Polyomino>();
             this.currentPolyomino.controller = this;
             this.currentPolyomino.init();
             this.currentPolyomino.falling = true;

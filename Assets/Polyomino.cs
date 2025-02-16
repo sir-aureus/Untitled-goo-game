@@ -10,6 +10,8 @@ public class Polyomino : MonoBehaviour
 
     public bool falling = false;
 
+    public int colorIndex = 0;
+
     public int getWidth()
     {
         return this.maxX - this.minX + 1;
@@ -49,7 +51,6 @@ public class Polyomino : MonoBehaviour
     {
         int centerX = this.minX;
         int centerY = this.minY;
-        Debug.Log("bounds: " + this.minX + ", " + this.maxX + ", " + this.minY + ", " + this.maxY);
         int lastGridX = this.gridX, lastGridY = this.gridY;
         this.gridX = gridX;
         this.gridY = gridY;
@@ -66,18 +67,14 @@ public class Polyomino : MonoBehaviour
                 {
                     int x = this.gridX - centerX + i;
                     int y = this.gridY - centerY + j;
-                    Debug.Log("i: " + i + ", j: " + j);
-                    Debug.Log("x: " + x + ", y: " + y);
                     if (x < 0 || x >= gameGrid.GetLength(0) || y < 0 || y >= gameGrid.GetLength(1))
                     {
                         valid = false;
-                        Debug.Log("out of bounds");
                         break;
                     }
                     if (gameGrid[x, y] != null && gameGrid[x, y] != this)
                     {
                         valid = false;
-                        Debug.Log("occupied");
                         break;
                     }
                 }
@@ -113,7 +110,6 @@ public class Polyomino : MonoBehaviour
                     {
                         int x = this.gridX - centerX + i;
                         int y = this.gridY - centerY + j;
-                        Debug.Log("x: " + x + ", y: " + y);
                         gameGrid[x, y] = this;
                     }
                 }
@@ -195,9 +191,8 @@ public class Polyomino : MonoBehaviour
 
     protected void applyShape()
     {
-        // Debug.Log("maxX: " + this.maxX + ", minX: " + this.minX + ", maxY: " + this.maxY + ", minY: " + this.minY);
-        int centerX = 0;//(this.maxX - this.minX + 1) / 2;
-        int centerY = 0;//(this.maxY - this.minY + 1) / 2;
+        int centerX = 0;
+        int centerY = 0;
         for (int i = this.minX; i <= this.maxX; i++)
         {
             for (int j = this.minY; j <= this.maxY; j++)
@@ -220,12 +215,7 @@ public class Polyomino : MonoBehaviour
             }
         }
     }
-
-    public void setColorIndex(int colorIndex)
-    {
-
-    }
-
+    
     public bool rotate(bool clockwise)
     {
 

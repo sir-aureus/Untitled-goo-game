@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GreenEye
+  m_Controller: {fileID: 9100000, guid: 032a4d026fcd48144bdc5099b00e2171, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 0ce09e355cb9a7b479fc6db1af18a81b, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ca4124a8c3507fb4dad9b4b3e60d60b8, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 3497d670dd8d0a0499e057bbee008680, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f8fd66ae764159a4cbefaa554038f2bb, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: f47101471fbe4b443a5abbf16b71ff65, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 89b501c0484f9b5448c98c07889c4b58, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 269d46f425264c140b3a8414c1f2a089, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d21a6b19420359340be75fa2e3b58b0c, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 2e764843ff29ba047915d6094169d811, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 968f65433fb4a1c4abb2c057fb084457, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 658d14a0b134ab34d8b2df403ddc7343, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d4d659df56831af4eaba738fce7339b3, type: 2}

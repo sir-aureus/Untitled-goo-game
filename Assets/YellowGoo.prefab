@@ -191,7 +191,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8011151833696012001}
@@ -225,6 +225,7 @@ MonoBehaviour:
   myRuleTile: {fileID: 11400000, guid: 4677aae2d379d463f9496d7eed4de691, type: 2}
   controller: {fileID: 0}
   falling: 0
+  colorIndex: 4
 --- !u!114 &6112249109903240742
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,9 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public enum GameState
 {
     Spawn,
+    Holding,
     Dropping,
     Clearing,
     Falling,
@@ -16,12 +18,23 @@ public class GooyoController : MonoBehaviour
     public GameObject[] polyominoPrefabs;
     public GameObject background;
 
+    public Camera sceneCamera;
+
+    public AudioSource landSound;
+
     public int tilesHoriz = 16;
     public int tilesVert = 28;
 
     public float tileScale = 0.75f;
 
     public float dropSpeed = 2.0f;
+    public float clearSpeed = 2.0f;
+
+    public float holdTimeLimit = 1.5f;
+
+    public int maxColors = 5;
+    
+    public int shuffleColorCount = 3;
 
     // runtime state
     protected bool paused = false;
@@ -36,6 +49,8 @@ public class GooyoController : MonoBehaviour
     protected Vector3 gridSpacingX, gridSpacingY;
 
     protected float gameTick = 0.0f;
+
+    protected List<Polyomino> polyQueue;
 
     public Polyomino[,] getGameGrid()
     {
@@ -68,9 +83,12 @@ public class GooyoController : MonoBehaviour
                 this.gameGrid[x, y] = null;
             }
         }
-        this.gridOffset = new Vector3(-this.tilesHoriz * tileScale * 0.5f + 0.25f, -this.tilesVert * tileScale * 0.5f + 0.25f, 0);
+        this.gridOffset = new Vector3(-this.tilesHoriz * tileScale * 0.5f + 0.5f, -this.tilesVert * tileScale * 0.5f + 0.5f, 0);
         this.gridSpacingX = new Vector3(tileScale, 0, 0);
         this.gridSpacingY = new Vector3(0, tileScale, 0);
+
+        this.polyQueue = new List<Polyomino>();
+        this.generateNewQueue();
     }
 
     // Update is called once per frame
@@ -78,41 +96,89 @@ public class GooyoController : MonoBehaviour
     {
         if (this.gameState == GameState.Spawn)
         {
-            this.currentPolyomino = Instantiate(this.polyominoPrefabs[Random.Range(0, this.polyominoPrefabs.GetLength(0)-1)], background.transform).GetComponent<Polyomino>();
+            this.currentPolyomino = this.polyQueue[0];
+            this.currentPolyomino.transform.SetParent(this.background.transform);//Instantiate(this.polyominoPrefabs[UnityEngine.Random.Range(0, Math.Min(this.maxColors, this.polyominoPrefabs.GetLength(0)))], background.transform).GetComponent<Polyomino>();
             this.currentPolyomino.controller = this;
             this.currentPolyomino.init();
             this.currentPolyomino.falling = true;
             this.currentPolyomino.setRandomShape();
             this.gamePieces.Add(this.currentPolyomino);
-            int x = this.tilesHoriz/2 - this.currentPolyomino.getWidth()/2;
+            int x = this.getGridXFromMouse();
             int y = this.tilesVert - this.currentPolyomino.getHeight();
-            Debug.Log("width: " + this.currentPolyomino.getWidth() + ", height: " + this.currentPolyomino.getHeight());
-            Debug.Log("x: " + x + ", y: " + y);
-            bool hasSpace = this.currentPolyomino.setGridPosition(x, y);
-            if (!hasSpace)
+
+            this.polyQueue.RemoveAt(0);
+
+            if (this.polyQueue.Count == 0)
             {
-                this.gameState = GameState.GameOver;
-                this.currentPolyomino.setGridPosition(x, y, true);
-                Debug.Log("game over");
+                this.generateNewQueue();
             }
-            else
+          
+            this.currentPolyomino.setVisualPosition(x, y);
+            this.gameState = GameState.Holding;
+            this.gameTick = 0;
+        }
+        else if (this.gameState == GameState.Holding)
+        {
+            this.gameTick += Math.Min(Time.deltaTime, 1f/30f);
+            bool click = (this.gameTick >= this.holdTimeLimit && this.holdTimeLimit > 0) || Input.GetMouseButtonDown(0);
+
+            int x = this.getGridXFromMouse();
+            int y = this.tilesVert - this.currentPolyomino.getHeight();
+            if (this.currentPolyomino.canSetGridPosition(x, y) || !this.currentPolyomino.canSetGridPosition(this.currentPolyomino.getGridX(), this.currentPolyomino.getGridY()))
             {
-                this.gameState = GameState.Dropping;
+                this.currentPolyomino.setVisualPosition(x, y);
+            }
+
+            if (click)
+            {
+                this.gameTick = 0;
+                bool hasSpace = this.currentPolyomino.setGridPosition(this.currentPolyomino.getGridX(), this.currentPolyomino.getGridY());
+                if (!hasSpace)
+                {
+                    this.gameState = GameState.GameOver;
+                    this.currentPolyomino.setGridPosition(x, y, true);
+                    this.currentPolyomino.falling = false;
+                    Debug.Log("game over");
+                }
+                else
+                {
+                    this.gameState = GameState.Dropping;
+                }
             }
         }
         else if (this.gameState == GameState.Dropping)
         {
-            this.gameTick += Time.deltaTime;
+            this.gameTick += Math.Min(Time.deltaTime, 1f/30f);
 
             if (this.gameTick >= 1/this.dropSpeed)
             {
                 this.gameTick -= 1/this.dropSpeed;
-                bool landed = !this.currentPolyomino.fallOneTile();
+                this.currentPolyomino.fallOneTile();
+                bool landed = !this.currentPolyomino.canFallOneTile();
                 if (landed)
                 {
-                    this.gameState = GameState.Spawn;
+                    this.landSound.Play();
+                    this.currentPolyomino.falling = false;
+                    bool didClear = this.checkForClears();
+                    if (didClear)
+                    {
+                        this.gameState = GameState.Clearing;
+                    }
+                    else
+                    {
+                        this.gameState = GameState.Spawn;
+                    }
                 }
-                Debug.Log("tick");
+            }
+
+            foreach (Polyomino piece in this.gamePieces)
+            {
+                if (piece.falling)
+                {
+                    float lerp = this.gameTick * this.dropSpeed;
+                    piece.applyGridPosition();
+                    piece.transform.position -= this.gridSpacingY *lerp;
+                }
             }
             // this.currentPolyomino.transform.position += new Vector3(0, -this.dropSpeed * Time.deltaTime, 0);
             // if (this.currentPolyomino.transform.position.y < 0)
@@ -120,10 +186,186 @@ public class GooyoController : MonoBehaviour
             //     this.gameState = GameState.Falling;
             // }
         }
-        // else if (this.gameState == GameState.Falling)
-        // {
-        //     this.currentPolyomino.fallOneTile(this.gameGrid);
-        //     this.gameState = GameState.Dropping;
-        // }
+        else if (this.gameState == GameState.Clearing)
+        {
+            this.gameTick += Math.Min(Time.deltaTime, 1f/30f);
+            if (this.gameTick >= 1/this.clearSpeed)
+            {
+                this.gameTick -= 1/this.clearSpeed;
+                bool shouldFall = this.checkForUnsupported();
+                if (shouldFall)
+                {
+                    this.gameState = GameState.Falling;
+                }
+                else
+                {
+                    this.gameState = GameState.Spawn;
+                }
+            }
+        }
+        else if (this.gameState == GameState.Falling)
+        {
+            this.gameTick += Math.Min(Time.deltaTime, 1f/30f);
+            if (this.gameTick >= 1/this.dropSpeed)
+            {
+                this.gameTick -= 1/this.dropSpeed;
+            
+                bool stillFalling = false;
+                bool anyLanded = true;
+                bool firstIteration = true;
+
+                while (anyLanded)
+                {
+                    anyLanded = false;
+                    foreach (Polyomino piece in this.gamePieces)
+                    {
+                        if (piece.falling)
+                        {
+                            if (piece.canFallOneTile() && firstIteration)
+                            {
+                                piece.fallOneTile();
+                            }
+
+                            if (!piece.canFallOneTile())
+                            {
+                                piece.falling = false;
+                                anyLanded = true;
+                                this.landSound.Play();
+                            }
+                            else
+                            {
+                                stillFalling = true;
+                            }
+                        }
+                    }
+                    firstIteration = false;
+                }
+
+                if (!stillFalling)
+                {
+                    bool didClear = this.checkForClears();
+                    if (didClear)
+                    {
+                        this.gameState = GameState.Clearing;
+                    }
+                    else
+                    {
+                        this.gameState = GameState.Spawn;
+                    }
+                }
+            }
+            // this.currentPolyomino.fallOneTile(this.gameGrid);
+            // this.gameState = GameState.Dropping;
+
+            foreach (Polyomino piece in this.gamePieces)
+            {
+                if (piece.falling)
+                {
+                    float lerp = this.gameTick * this.dropSpeed;
+                    piece.applyGridPosition();
+                    piece.transform.position -= this.gridSpacingY *lerp;
+                }
+            }
+        }
+    }
+
+    protected void generateNewQueue()
+    {
+        int numColors = Math.Min(this.maxColors, this.polyominoPrefabs.GetLength(0));
+
+        for (int i = 0; i < numColors; i++)
+        {
+            for (int j = 0; j < this.shuffleColorCount; j++)
+            {
+                this.polyQueue.Add(Instantiate(this.polyominoPrefabs[i], null).GetComponent<Polyomino>());
+            }
+        }
+        
+        int count = numColors * this.shuffleColorCount;
+
+        for (int i = 0; i < count - 1; i++)
+        {
+            int newIndex = UnityEngine.Random.Range(0, count);
+            Polyomino temp = this.polyQueue[i];
+            this.polyQueue[i] = this.polyQueue[newIndex];
+            this.polyQueue[newIndex] = temp;
+        }
+    }
+
+    protected int getGridXFromMouse(bool adjustToFit = true)
+    {
+        Vector3 pos = sceneCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, sceneCamera.pixelHeight - Input.mousePosition.y, 0));
+
+        pos = this.background.transform.InverseTransformPoint(pos);
+
+        float width = background.GetComponent<SpriteRenderer>().size.x;
+
+        int posX = (int)Math.Clamp(Math.Round((pos.x + width * 0.5f) * this.tilesHoriz / width - (this.currentPolyomino.getMinX() + this.currentPolyomino.getMaxX()) * 0.5f - 0.5f),
+            -this.currentPolyomino.getMinX(),
+            this.tilesHoriz - this.currentPolyomino.getMaxX()-1);
+
+        return posX;
+    }
+
+    public bool checkForClears()
+    {
+        HashSet<Polyomino> toRemove = new HashSet<Polyomino>();
+        foreach (Polyomino piece in this.gamePieces)
+        {
+            HashSet<Polyomino> adjacent = piece.getAdjacentMatches();
+            if (adjacent.Count > 1)
+            {
+                toRemove.Add(piece);
+                toRemove.UnionWith(adjacent);
+                Debug.Log("Match!");
+            }
+        }
+
+        foreach (Polyomino piece in toRemove)
+        {
+            this.gamePieces.Remove(piece);
+            piece.removeFromGrid();
+            Destroy(piece.gameObject);
+        }
+
+        return toRemove.Count > 0;
+    }
+
+    public bool checkForUnsupported()
+    {
+        bool shouldFall = false;
+        foreach (Polyomino piece in this.gamePieces)
+        {
+            piece.falling = true;
+        }
+
+        bool anyLanded = true;
+
+        while (anyLanded)
+        {
+            // iterate multiple times, because pieces that become supported may in turn support other pieces
+            anyLanded = false;
+            for (int x = 0; x < this.tilesHoriz; x++)
+            {
+                for (int y = 0; y < this.tilesVert; y++)
+                {
+                    Polyomino piece = this.gameGrid[x, y];
+                    if (piece != null && piece.falling)
+                    {
+                        if (y == 0 || (this.gameGrid[x, y-1] != null && !this.gameGrid[x, y-1].falling))
+                        {
+                            piece.falling = false;
+                            anyLanded = true;
+                        }
+                        else
+                        {
+                            shouldFall = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return shouldFall;
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 public class Polyomino : MonoBehaviour
 {
@@ -20,6 +21,26 @@ public class Polyomino : MonoBehaviour
     public int getHeight()
     {
         return this.maxY - this.minY + 1;
+    }
+
+    public int getMinX()
+    {
+        return this.minX;
+    }
+    
+    public int getMaxX()
+    {
+        return this.maxX;
+    }
+
+    public int getGridX()
+    {
+        return this.gridX;
+    }
+
+    public int getGridY()
+    {
+        return this.gridY;
     }
 
     protected bool[,] shape;
@@ -46,10 +67,54 @@ public class Polyomino : MonoBehaviour
         }
     }
 
+    public void setVisualPosition(int gridX, int gridY)
+    {
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.applyGridPosition();
+    }
+
+    public bool canSetGridPosition(int gridX, int gridY)
+    {
+        int centerX = 0;//this.minX;
+        int centerY = this.minY;
+
+        var gameGrid = this.controller.getGameGrid();
+
+        for (int i = this.minX; i <= this.maxX; i++)
+        {
+            for (int j = this.minY; j <= this.maxY; j++)
+            {
+                if (this.shape[i,j])
+                {
+                    int x = gridX - centerX + i;
+                    int y = gridY - centerY + j;
+                    if (x < 0 || x >= gameGrid.GetLength(0) || y < 0 || y >= gameGrid.GetLength(1))
+                    {
+                        return false;
+                    }
+                    if (gameGrid[x, y] != null && gameGrid[x, y] != this && !gameGrid[x, y].falling)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public void applyGridPosition()
+    {
+        int centerX = 0;//this.minX;
+        int centerY = this.minY;
+        this.transform.position = this.controller.getGridOffset() + this.controller.getGridSpacingX() * (this.gridX - centerX) + this.controller.getGridSpacingY() * (this.gridY - centerY);
+    }
+
     // updates the polyomino's position on the grid; if the new position is invalid, returns false and reverts
     public bool setGridPosition(int gridX, int gridY, bool force = false)
     {
-        int centerX = this.minX;
+        int centerX = 0;//this.minX;
         int centerY = this.minY;
         int lastGridX = this.gridX, lastGridY = this.gridY;
         this.gridX = gridX;
@@ -72,7 +137,7 @@ public class Polyomino : MonoBehaviour
                         valid = false;
                         break;
                     }
-                    if (gameGrid[x, y] != null && gameGrid[x, y] != this)
+                    if (gameGrid[x, y] != null && gameGrid[x, y] != this && !gameGrid[x, y].falling)
                     {
                         valid = false;
                         break;
@@ -85,21 +150,14 @@ public class Polyomino : MonoBehaviour
         {
             this.gridX = lastGridX;
             this.gridY = lastGridY;
+
+            this.applyGridPosition();
             return false;
         }
         else
         {
-            // // remove the polyomino from the grid
-            for (int i = 0; i < gameGrid.GetLength(0); i++)
-            {
-                for (int j = 0; j < gameGrid.GetLength(1); j++)
-                {
-                    if (gameGrid[i,j] == this)
-                    {
-                        gameGrid[i,j] = null;
-                    }
-                }
-            }
+            // remove the polyomino from the grid
+            this.removeFromGrid();
 
             // add the polyomino to the grid in the new position
             for (int i = minX; i <= maxX; i++)
@@ -117,13 +175,25 @@ public class Polyomino : MonoBehaviour
 
             // update position on screen
 
-            this.transform.position = this.controller.getGridOffset() + this.controller.getGridSpacingX() * (this.gridX - centerX) + this.controller.getGridSpacingY() * (this.gridY - centerY);
-
+            this.applyGridPosition();
             return true;
         }        
     }
 
-
+    public void removeFromGrid()
+    {
+        var gameGrid = this.controller.getGameGrid();
+        for (int i = 0; i < gameGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < gameGrid.GetLength(1); j++)
+            {
+                if (gameGrid[i,j] == this)
+                {
+                    gameGrid[i,j] = null;
+                }
+            }
+        }
+    }
     public void setRandomShape()
     {
         int numTiles = Random.Range(2, 5);
@@ -215,7 +285,7 @@ public class Polyomino : MonoBehaviour
             }
         }
     }
-    
+
     public bool rotate(bool clockwise)
     {
 
@@ -227,6 +297,11 @@ public class Polyomino : MonoBehaviour
 
     }
 
+    public bool canFallOneTile()
+    {
+        return this.canSetGridPosition(this.gridX, this.gridY - 1);
+    }
+
     public bool fallOneTile()
     {
         bool valid = this.setGridPosition(this.gridX, this.gridY - 1);
@@ -234,5 +309,49 @@ public class Polyomino : MonoBehaviour
         return valid;
     }
 
-    // public void 
+    public HashSet<Polyomino> getAdjacentMatches()
+    {
+        HashSet<Polyomino> adjacent = new HashSet<Polyomino>();
+
+        int centerX = 0;//this.minX;
+        int centerY = this.minY;
+
+        var gameGrid = this.controller.getGameGrid();
+
+        for (int i = this.minX; i <= this.maxX; i++)
+        {
+            for (int j = this.minY; j <= this.maxY; j++)
+            {
+                if (this.shape[i,j])
+                {
+                    int x = this.gridX - centerX + i - 1;
+                    int y = this.gridY - centerY + j;
+                    if (x >= 0 && x < gameGrid.GetLength(0) && y >= 0 && y < gameGrid.GetLength(1) && gameGrid[x, y] != null && gameGrid[x, y] != this && gameGrid[x,y].colorIndex == this.colorIndex)
+                    {
+                        adjacent.Add(gameGrid[x, y]);
+                    }
+
+                    x = this.gridX - centerX + i + 1;
+                    if (x >= 0 && x < gameGrid.GetLength(0) && y >= 0 && y < gameGrid.GetLength(1) && gameGrid[x, y] != null && gameGrid[x, y] != this && gameGrid[x,y].colorIndex == this.colorIndex)
+                    {
+                        adjacent.Add(gameGrid[x, y]);
+                    }
+                    
+                    x = this.gridX - centerX + i;
+                    y = this.gridY - centerY + j - 1;
+                    if (x >= 0 && x < gameGrid.GetLength(0) && y >= 0 && y < gameGrid.GetLength(1) && gameGrid[x, y] != null && gameGrid[x, y] != this && gameGrid[x,y].colorIndex == this.colorIndex)
+                    {
+                        adjacent.Add(gameGrid[x, y]);
+                    }
+
+                    y = this.gridY - centerY + j + 1;
+                    if (x >= 0 && x < gameGrid.GetLength(0) && y >= 0 && y < gameGrid.GetLength(1) && gameGrid[x, y] != null && gameGrid[x, y] != this && gameGrid[x,y].colorIndex == this.colorIndex)
+                    {
+                        adjacent.Add(gameGrid[x, y]);
+                    }
+                }
+            }
+        }
+        return adjacent;
+    }
 }

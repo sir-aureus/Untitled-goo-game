@@ -32,6 +32,15 @@ public class Polyomino : MonoBehaviour
     {
         return this.maxX;
     }
+    public int getMinY()
+    {
+        return this.minY;
+    }
+    
+    public int getMaxY()
+    {
+        return this.maxY;
+    }
 
     public int getGridX()
     {

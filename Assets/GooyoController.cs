@@ -17,6 +17,7 @@ public class GooyoController : MonoBehaviour
     // settings
     public GameObject[] polyominoPrefabs;
     public GameObject background;
+    public GameObject nextPreview;
 
     public Camera sceneCamera;
 
@@ -105,11 +106,9 @@ public class GooyoController : MonoBehaviour
         if (this.gameState == GameState.Spawn)
         {
             this.currentPolyomino = this.polyQueue[0];
-            this.currentPolyomino.transform.SetParent(this.background.transform);//Instantiate(this.polyominoPrefabs[UnityEngine.Random.Range(0, Math.Min(this.maxColors, this.polyominoPrefabs.GetLength(0)))], background.transform).GetComponent<Polyomino>();
-            this.currentPolyomino.controller = this;
-            this.currentPolyomino.init();
+            this.currentPolyomino.gameObject.SetActive(true);
+            this.currentPolyomino.transform.SetParent(this.background.transform);
             this.currentPolyomino.falling = true;
-            this.currentPolyomino.setRandomShape();
             this.gamePieces.Add(this.currentPolyomino);
             int x = this.getGridXFromMouse();
             int y = this.tilesVert - this.currentPolyomino.getHeight();
@@ -120,6 +119,12 @@ public class GooyoController : MonoBehaviour
             {
                 this.generateNewQueue();
             }
+            Polyomino next = this.polyQueue[0];
+            next.transform.SetParent(this.nextPreview.transform);
+            next.gameObject.SetActive(true);
+            next.transform.SetLocalPositionAndRotation(new Vector3((-next.getMinX() - next.getWidth() * 0.5f) * this.gridSpacingX.x + 0.5f,
+                (-next.getMinY() - next.getHeight() * 0.5f) * this.gridSpacingY.y + 0.5f,
+                0f), Quaternion.identity);
           
             this.currentPolyomino.setVisualPosition(x, y);
             this.gameState = GameState.Holding;
@@ -286,7 +291,13 @@ public class GooyoController : MonoBehaviour
         {
             for (int j = 0; j < this.shuffleColorCount; j++)
             {
-                this.polyQueue.Add(Instantiate(this.polyominoPrefabs[i], null).GetComponent<Polyomino>());
+                Polyomino poly = Instantiate(this.polyominoPrefabs[i], null).GetComponent<Polyomino>();
+                this.polyQueue.Add(poly);
+
+                poly.controller = this;
+                poly.init();
+                poly.setRandomShape();
+                poly.gameObject.SetActive(false);
             }
         }
         

@@ -397,7 +397,7 @@ GameObject:
   - component: {fileID: 353994419}
   - component: {fileID: 353994420}
   m_Layer: 0
-  m_Name: 9-Sliced
+  m_Name: preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -471,7 +471,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 5, y: 5}
+  m_Size: {x: 7.5, y: 7.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -536,8 +536,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SCORE
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f15ab859a11794abe8345d06643f86c6, type: 2}
-  m_sharedMaterial: {fileID: 6007204077528899110, guid: f15ab859a11794abe8345d06643f86c6, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1cb77a8d9f18f47859a04f9be2194b86, type: 2}
+  m_sharedMaterial: {fileID: 3337380947411096544, guid: 1cb77a8d9f18f47859a04f9be2194b86, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -787,7 +787,7 @@ GameObject:
   - component: {fileID: 1403127405}
   - component: {fileID: 1403127404}
   m_Layer: 0
-  m_Name: 9-Sliced
+  m_Name: gamefield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -926,8 +926,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 000000
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f15ab859a11794abe8345d06643f86c6, type: 2}
-  m_sharedMaterial: {fileID: 6007204077528899110, guid: f15ab859a11794abe8345d06643f86c6, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1cb77a8d9f18f47859a04f9be2194b86, type: 2}
+  m_sharedMaterial: {fileID: 3337380947411096544, guid: 1cb77a8d9f18f47859a04f9be2194b86, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1069,7 +1069,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 5.5, y: 5.5}
+  m_Size: {x: 8, y: 8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1092,7 +1092,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -12, y: 6}
+  m_AnchoredPosition: {x: -12, y: 4.5}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1835530079
@@ -1267,6 +1267,7 @@ MonoBehaviour:
   - {fileID: 5980660572919855627, guid: c4a7c74f725b34df48954e6712fd45ed, type: 3}
   - {fileID: 5980660572919855627, guid: 9adaba52f95cf428481ce6d516f34e8e, type: 3}
   background: {fileID: 1403127403}
+  nextPreview: {fileID: 353994418}
   sceneCamera: {fileID: 140837058}
   landSound: {fileID: 2069171080}
   tilesHoriz: 8
@@ -1720,8 +1721,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: NEXT
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f15ab859a11794abe8345d06643f86c6, type: 2}
-  m_sharedMaterial: {fileID: 6007204077528899110, guid: f15ab859a11794abe8345d06643f86c6, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1cb77a8d9f18f47859a04f9be2194b86, type: 2}
+  m_sharedMaterial: {fileID: 3337380947411096544, guid: 1cb77a8d9f18f47859a04f9be2194b86, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

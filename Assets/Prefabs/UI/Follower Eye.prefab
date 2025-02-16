@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 6541587405715960208}
   - component: {fileID: 634991115621119787}
   m_Layer: 0
-  m_Name: FollowerEye
+  m_Name: Follower Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

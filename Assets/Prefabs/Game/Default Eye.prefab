@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4463373354935638067}
   - component: {fileID: 3427519149763177220}
   m_Layer: 0
-  m_Name: DefaultEye
+  m_Name: Default Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

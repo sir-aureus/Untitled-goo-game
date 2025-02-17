@@ -21,7 +21,6 @@ public class GooyoController : MonoBehaviour
     public GameObject nextPreview;
     public GameObject pauseMenu;
     public GameObject gameOverMenu;
-    public GameObject[] hideOnGameOver;
 
     public TextMeshProUGUI scoreText;
 
@@ -137,10 +136,13 @@ public class GooyoController : MonoBehaviour
             Polyomino next = this.polyQueue[0];
             next.transform.SetParent(this.nextPreview.transform);
             next.gameObject.SetActive(true);
-            next.transform.SetLocalPositionAndRotation(new Vector3((-next.getMinX() - next.getWidth() * 0.5f) * this.gridSpacingX.x + 0.5f,
-                (-next.getMinY() - next.getHeight() * 0.5f) * this.gridSpacingY.y + 0.5f,
+            next.transform.SetLocalPositionAndRotation(new Vector3(((-next.getMinX() - next.getWidth() * 0.5f) * this.gridSpacingX.x + 0.5f) * 15f,
+                ((-next.getMinY() - next.getHeight() * 0.5f) * this.gridSpacingY.y + 0.5f) * 15f,
                 0f), Quaternion.identity);
-          
+            //next.transform.SetLocalPositionAndRotation(new Vector3((-next.getMinX() - next.getWidth() * 0.5f) * this.gridSpacingX.x + 0.5f,
+            //    (-next.getMinY() - next.getHeight() * 0.5f) * this.gridSpacingY.y + 0.5f,
+            //    0f), Quaternion.identity);
+
             this.currentPolyomino.setVisualPosition(x, y);
             this.gameState = GameState.Holding;
             this.gameTick = 0;
@@ -165,10 +167,6 @@ public class GooyoController : MonoBehaviour
                 if (!hasSpace)
                 {
                     this.gameState = GameState.GameOver;
-                    foreach (GameObject hideObject in this.hideOnGameOver)
-                    {
-                        hideObject.SetActive(false);
-                    }
                     this.currentPolyomino.setGridPosition(x, y, true);
                     this.currentPolyomino.falling = false;
                     this.gameOverMenu.SetActive(true);

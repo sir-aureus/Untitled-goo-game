@@ -16,8 +16,9 @@ public class EyeAnimation : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    public void InitializeAnimationParameters(int eyeType)
+    private void Start()
     {
+        int eyeType = Random.Range(0, 5);
         _spriteRenderer.sprite = _defaultSprite[eyeType];
         _animator.SetInteger("Variation", eyeType);
     }

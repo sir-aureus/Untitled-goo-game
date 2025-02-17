@@ -2457,7 +2457,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 0.75
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -4365,6 +4365,7 @@ MonoBehaviour:
   background: {fileID: 1403127403}
   nextPreview: {fileID: 353994418}
   pauseMenu: {fileID: 1328398208}
+  gameOverMenu: {fileID: 1074041463}
   scoreText: {fileID: 1574268847}
   sceneCamera: {fileID: 140837058}
   landSounds:
@@ -4377,6 +4378,8 @@ MonoBehaviour:
   - {fileID: 1506182611}
   - {fileID: 1523604145}
   - {fileID: 422213369}
+  BGM: {fileID: 214979593}
+  gameOverMusic: {fileID: 1088880677}
   lowPassFilter: {fileID: 140837061}
   tilesHoriz: 8
   tilesVert: 14

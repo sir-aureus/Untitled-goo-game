@@ -242,10 +242,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.04194471
-    y: 0.042372882
-    width: 0.9151573
-    height: 0.91525424
+    x: 0
+    y: 0
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -2489,7 +2489,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Moonflaur
+  m_text: mooflaur
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1cb77a8d9f18f47859a04f9be2194b86, type: 2}
   m_sharedMaterial: {fileID: 3337380947411096544, guid: 1cb77a8d9f18f47859a04f9be2194b86, type: 2}

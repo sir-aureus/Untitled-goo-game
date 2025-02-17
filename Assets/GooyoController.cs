@@ -20,6 +20,7 @@ public class GooyoController : MonoBehaviour
     public GameObject background;
     public GameObject nextPreview;
     public GameObject pauseMenu;
+    public GameObject gameOverMenu;
 
     public TextMeshProUGUI scoreText;
 
@@ -27,6 +28,8 @@ public class GooyoController : MonoBehaviour
 
     public AudioSource[] landSounds;
     public AudioSource[] comboSounds;
+    public AudioSource BGM;
+    public AudioSource gameOverMusic;
     public AudioLowPassFilter lowPassFilter;
 
     public int tilesHoriz = 16;
@@ -163,6 +166,9 @@ public class GooyoController : MonoBehaviour
                     this.gameState = GameState.GameOver;
                     this.currentPolyomino.setGridPosition(x, y, true);
                     this.currentPolyomino.falling = false;
+                    this.gameOverMenu.SetActive(true);
+                    this.BGM.Stop();
+                    this.gameOverMusic.Play();
                     Debug.Log("game over");
                 }
                 else
@@ -286,6 +292,14 @@ public class GooyoController : MonoBehaviour
                     piece.applyGridPosition();
                     piece.transform.position -= this.gridSpacingY *lerp;
                 }
+            }
+        }
+        else if (this.gameState == GameState.GameOver)
+        {
+            if (!this.gameOverMusic.isPlaying && !this.BGM.isPlaying)
+            {
+                this.lowPassFilter.enabled = true;
+                this.BGM.Play();
             }
         }
     }
@@ -433,6 +447,13 @@ public class GooyoController : MonoBehaviour
         this.gameTick = 0f;
         this.updateScore();
         this.gameState = GameState.Spawn;
+        this.gameOverMenu.SetActive(false);
+        this.gameOverMusic.Stop();
+        if (!this.BGM.isPlaying)
+        {
+            this.BGM.Play();
+        }
+        this.lowPassFilter.enabled = false;
         foreach (Polyomino polyomino in this.gamePieces)
         {
             Destroy(polyomino.gameObject);

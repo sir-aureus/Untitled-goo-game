@@ -224,6 +224,7 @@ MonoBehaviour:
   myGrid: {fileID: 6586909462650048387}
   myRuleTile: {fileID: 11400000, guid: cc7e276dbbcb24ace860e5c6bec93b53, type: 2}
   controller: {fileID: 0}
+  eyePrefab: {fileID: 8278735136410085727, guid: 8095a982d4697f34cad2b9ee69654362, type: 3}
   falling: 0
   colorIndex: 3
 --- !u!114 &6112249109903240742

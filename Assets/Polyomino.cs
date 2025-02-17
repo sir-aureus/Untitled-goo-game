@@ -9,6 +9,8 @@ public class Polyomino : MonoBehaviour
 
     public GooyoController controller;
 
+    public GameObject eyePrefab;
+
     public bool falling = false;
 
     public int colorIndex = 0;
@@ -226,7 +228,7 @@ public class Polyomino : MonoBehaviour
         {
             x = Random.Range(0, numTiles);
             y = Random.Range(0, numTiles);
-            
+
             if (this.shape[x, y] == false)
             {
                 bool valid = false;
@@ -294,6 +296,18 @@ public class Polyomino : MonoBehaviour
                                 int x = (i - centerX) * 3 + subX;
                                 int y = (j - centerY) * 3 + subY;
                                 this.myGrid.SetTile(new Vector3Int(x, y, 0), this.myRuleTile);
+
+                                if (subX == 0 && subY == 0)
+                                {
+                                    bool addEye = (Random.Range(0, 2) == 0);
+
+                                    if (addEye)
+                                    {
+                                        GameObject eye = Instantiate(this.eyePrefab, this.myGrid.transform);
+                                        eye.transform.position = this.myGrid.GetCellCenterWorld(new Vector3Int(x, y, 0));
+                                        eye.transform.Translate(new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), -1));
+                                    }
+                                }
                             }
                         }
                     } 

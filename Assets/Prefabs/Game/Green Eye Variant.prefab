@@ -38,7 +38,7 @@ PrefabInstance:
       objectReference: {fileID: 1665798161, guid: ef6dd3c121005b045a23b664ec90a886, type: 3}
     - target: {fileID: 6662205238118150442, guid: 3f5c96890d627164c9ae8aa79e9851e5, type: 3}
       propertyPath: m_Name
-      value: GreenEye Variant
+      value: Green Eye Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7049777305036860442, guid: 3f5c96890d627164c9ae8aa79e9851e5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -78,6 +78,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7049777305036860442, guid: 3f5c96890d627164c9ae8aa79e9851e5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7049777305036860442, guid: 3f5c96890d627164c9ae8aa79e9851e5, type: 3}
+      propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8581622066977143333, guid: 3f5c96890d627164c9ae8aa79e9851e5, type: 3}

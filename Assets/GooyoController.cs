@@ -99,7 +99,7 @@ public class GooyoController : MonoBehaviour
         this.gridSpacingX = new Vector3(tileScale, 0, 0);
         this.gridSpacingY = new Vector3(0, tileScale, 0);
 
-        this.maxColors = 3 + (int)DifficultyManager.CurrentDifficulty;
+        this.maxColors = 3 + (int)DifficultyTracker.CurrentDifficulty;
         
         this.polyQueue = new List<Polyomino>();
         this.generateNewQueue();

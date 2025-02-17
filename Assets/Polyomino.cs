@@ -52,9 +52,15 @@ public class Polyomino : MonoBehaviour
         return this.gridY;
     }
 
+    public int getNumTiles()
+    {
+        return this.numTiles;
+    }
+
     protected bool[,] shape;
     protected int gridX, gridY;
     protected int minX = 0, maxX = 0, minY = 0, maxY = 0;
+    protected int numTiles = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -206,6 +212,7 @@ public class Polyomino : MonoBehaviour
     public void setRandomShape()
     {
         int numTiles = Random.Range(2, 5);
+        this.numTiles = numTiles;
         this.shape = new bool[numTiles, numTiles];
 
         int x = numTiles / 2, y = numTiles / 2;

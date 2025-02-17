@@ -1268,6 +1268,7 @@ MonoBehaviour:
   - {fileID: 5980660572919855627, guid: 9adaba52f95cf428481ce6d516f34e8e, type: 3}
   background: {fileID: 1403127403}
   nextPreview: {fileID: 353994418}
+  scoreText: {fileID: 1574268847}
   sceneCamera: {fileID: 140837058}
   landSound: {fileID: 2069171080}
   tilesHoriz: 8

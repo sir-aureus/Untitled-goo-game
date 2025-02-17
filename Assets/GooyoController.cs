@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using TMPro;
 
 public enum GameState
 {
@@ -18,6 +19,8 @@ public class GooyoController : MonoBehaviour
     public GameObject[] polyominoPrefabs;
     public GameObject background;
     public GameObject nextPreview;
+
+    public TextMeshProUGUI scoreText;
 
     public Camera sceneCamera;
 
@@ -54,6 +57,9 @@ public class GooyoController : MonoBehaviour
     protected float gameTick = 0.0f;
 
     protected List<Polyomino> polyQueue;
+
+    protected int combo = 0;
+    protected int score = 0;
 
     public Polyomino[,] getGameGrid()
     {
@@ -173,6 +179,7 @@ public class GooyoController : MonoBehaviour
                 {
                     this.landSound.Play();
                     this.currentPolyomino.falling = false;
+                    this.combo = 0;
                     bool didClear = this.checkForClears();
                     if (didClear)
                     {
@@ -337,16 +344,20 @@ public class GooyoController : MonoBehaviour
             {
                 toRemove.Add(piece);
                 toRemove.UnionWith(adjacent);
-                Debug.Log("Match!");
             }
         }
+
+        this.combo += toRemove.Count - 2;
 
         foreach (Polyomino piece in toRemove)
         {
             this.gamePieces.Remove(piece);
             piece.removeFromGrid();
             Destroy(piece.gameObject);
+            this.score += this.combo * piece.getNumTiles();
         }
+
+        this.updateScore();
 
         return toRemove.Count > 0;
     }
@@ -387,6 +398,11 @@ public class GooyoController : MonoBehaviour
         }
         
         return shouldFall;
+    }
+
+    protected void updateScore()
+    {
+        this.scoreText.text = string.Format("{0:000000}", score);
     }
 
     public void togglePause()

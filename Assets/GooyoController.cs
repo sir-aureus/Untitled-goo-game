@@ -25,7 +25,9 @@ public class GooyoController : MonoBehaviour
 
     public Camera sceneCamera;
 
-    public AudioSource landSound;
+    public AudioSource[] landSounds;
+    public AudioSource[] comboSounds;
+    public AudioLowPassFilter lowPassFilter;
 
     public int tilesHoriz = 16;
     public int tilesVert = 28;
@@ -180,7 +182,7 @@ public class GooyoController : MonoBehaviour
                 bool landed = !this.currentPolyomino.canFallOneTile();
                 if (landed)
                 {
-                    this.landSound.Play();
+                    this.playRandomSound(this.landSounds);
                     this.currentPolyomino.falling = false;
                     this.combo = 0;
                     bool didClear = this.checkForClears();
@@ -249,7 +251,7 @@ public class GooyoController : MonoBehaviour
                             {
                                 piece.falling = false;
                                 anyLanded = true;
-                                this.landSound.Play();
+                                this.playRandomSound(this.landSounds);
                             }
                             else
                             {
@@ -358,6 +360,11 @@ public class GooyoController : MonoBehaviour
         }
 
         this.updateScore();
+        if (toRemove.Count > 0)
+        {
+            int soundIndex = Math.Clamp(this.combo - 1, 0, this.comboSounds.GetLength(0)-1);
+            this.comboSounds[soundIndex].Play();
+        }
 
         return toRemove.Count > 0;
     }
@@ -410,10 +417,12 @@ public class GooyoController : MonoBehaviour
         this.paused = !this.paused;
         if (this.paused)
         {
+            this.lowPassFilter.enabled = true;
             this.pauseMenu.SetActive(true);
         }
         else
         {
+            this.lowPassFilter.enabled = false;
             this.pauseMenu.SetActive(false);
         }
     }
@@ -434,5 +443,14 @@ public class GooyoController : MonoBehaviour
             Destroy(polyomino.gameObject);
         }
         this.generateNewQueue();
+    }
+
+    protected void playRandomSound(AudioSource[] sounds)
+    {
+        if (sounds.GetLength(0) > 0)
+        {
+            int soundIndex = UnityEngine.Random.Range(0, sounds.GetLength(0));
+            sounds[soundIndex].Play();
+        }
     }
 }

@@ -5,16 +5,22 @@ public class FollowerEye : MonoBehaviour
     private enum TargetType { Cursor, Transform }
 
     [SerializeField] private TargetType _targetType;
-    [SerializeField] private Transform _iris;
+    [SerializeField] private RectTransform _iris;
 
-    [Range(0.1f, 1.0f)]
-    [SerializeField] private float _maxDistance = 0.25f;
+    [Range(1.0f, 10.0f)]
+    [SerializeField] private float _maxDistance = 4f;
 
-    [SerializeField] private Transform targetTransform = null;
+    [SerializeField] private RectTransform _targetTransform = null;
+
+    private RectTransform _eyeRect;
+    private Canvas _canvas;
 
     private void Start()
     {
-        if(_targetType == TargetType.Transform && targetTransform == null)
+        _eyeRect = GetComponent<RectTransform>();
+        _canvas = GetComponentInParent<Canvas>();
+
+        if(_targetType == TargetType.Transform && _targetTransform == null)
         {
             Debug.LogWarning("The eye's target type is a Transform but no target transform has been defined.");
         }    
@@ -22,14 +28,16 @@ public class FollowerEye : MonoBehaviour
 
     private void Update()
     {
-        Vector3 direction = GetTargetPosition() - transform.position;
+        Vector2 targetPos = GetTargetPosition();
+
+        Vector2 direction = targetPos - (Vector2)_eyeRect.position;
 
         if(direction.magnitude > _maxDistance)
         {
             direction = direction.normalized * _maxDistance;
         }
 
-        _iris.position = transform.position + direction;
+        _iris.anchoredPosition = direction;
     }
 
     private Vector3 GetTargetPosition()
@@ -37,12 +45,12 @@ public class FollowerEye : MonoBehaviour
         switch(_targetType)
         {
             case TargetType.Cursor:
-                Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mousePosition.z = 0f;
-                return mousePosition;
+                Vector2 localPoint;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(_eyeRect, Input.mousePosition, _canvas.worldCamera, out localPoint);
+                return _eyeRect.TransformPoint(localPoint);
 
             case TargetType.Transform:
-                return targetTransform != null ? targetTransform.position : Vector3.zero;
+                return _targetTransform != null ? _targetTransform.position : Vector3.zero;
 
             default:
                 return Vector3.zero;

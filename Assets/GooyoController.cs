@@ -21,6 +21,7 @@ public class GooyoController : MonoBehaviour
     public GameObject nextPreview;
     public GameObject pauseMenu;
     public GameObject gameOverMenu;
+    public GameObject[] hideOnGameOver;
 
     public TextMeshProUGUI scoreText;
 
@@ -164,6 +165,10 @@ public class GooyoController : MonoBehaviour
                 if (!hasSpace)
                 {
                     this.gameState = GameState.GameOver;
+                    foreach (GameObject hideObject in this.hideOnGameOver)
+                    {
+                        hideObject.SetActive(false);
+                    }
                     this.currentPolyomino.setGridPosition(x, y, true);
                     this.currentPolyomino.falling = false;
                     this.gameOverMenu.SetActive(true);

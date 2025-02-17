@@ -3,20 +3,20 @@ using UnityEngine.SceneManagement;
 
 public class GameSceneManager : MonoBehaviour
 {
-    public static GameSceneManager Instance { get; private set; }
+    // public static GameSceneManager Instance { get; private set; }
 
-    private void Awake()
-    {
-        if(Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+    // private void Awake()
+    // {
+    //     if(Instance == null)
+    //     {
+    //         Instance = this;
+    //         DontDestroyOnLoad(gameObject);
+    //     }
+    //     else
+    //     {
+    //         Destroy(gameObject);
+    //     }
+    // }
 
     public void LoadScene(string sceneName)
     {
@@ -30,7 +30,9 @@ public class GameSceneManager : MonoBehaviour
 
     public void LoadNextScene()
     {
+        Debug.Log("Loading next scene");
         int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        Debug.Log(nextSceneIndex);
 
         if(nextSceneIndex < SceneManager.sceneCountInBuildSettings)
         {

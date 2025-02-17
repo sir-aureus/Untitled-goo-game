@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using TMPro;
 
 public enum GameState
 {
@@ -18,6 +19,9 @@ public class GooyoController : MonoBehaviour
     public GameObject[] polyominoPrefabs;
     public GameObject background;
     public GameObject nextPreview;
+    public GameObject pauseMenu;
+
+    public TextMeshProUGUI scoreText;
 
     public Camera sceneCamera;
 
@@ -55,6 +59,9 @@ public class GooyoController : MonoBehaviour
 
     protected List<Polyomino> polyQueue;
 
+    protected int combo = 0;
+    protected int score = 0;
+
     public Polyomino[,] getGameGrid()
     {
         return this.gameGrid;
@@ -76,7 +83,7 @@ public class GooyoController : MonoBehaviour
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         this.gameGrid = new Polyomino[this.tilesHoriz, this.tilesVert];
         for (int x = 0; x < this.tilesHoriz; x++)
@@ -90,6 +97,8 @@ public class GooyoController : MonoBehaviour
         this.gridSpacingX = new Vector3(tileScale, 0, 0);
         this.gridSpacingY = new Vector3(0, tileScale, 0);
 
+        this.maxColors = 3 + (int)DifficultyManager.CurrentDifficulty;
+        
         this.polyQueue = new List<Polyomino>();
         this.generateNewQueue();
         this.disableClicks = false;
@@ -173,6 +182,7 @@ public class GooyoController : MonoBehaviour
                 {
                     this.landSound.Play();
                     this.currentPolyomino.falling = false;
+                    this.combo = 0;
                     bool didClear = this.checkForClears();
                     if (didClear)
                     {
@@ -194,11 +204,6 @@ public class GooyoController : MonoBehaviour
                     piece.transform.position -= this.gridSpacingY *lerp;
                 }
             }
-            // this.currentPolyomino.transform.position += new Vector3(0, -this.dropSpeed * Time.deltaTime, 0);
-            // if (this.currentPolyomino.transform.position.y < 0)
-            // {
-            //     this.gameState = GameState.Falling;
-            // }
         }
         else if (this.gameState == GameState.Clearing)
         {
@@ -285,7 +290,9 @@ public class GooyoController : MonoBehaviour
 
     protected void generateNewQueue()
     {
+        this.polyQueue.Clear();
         int numColors = Math.Min(this.maxColors, this.polyominoPrefabs.GetLength(0));
+        Debug.Log("colors: " + numColors);
 
         for (int i = 0; i < numColors; i++)
         {
@@ -337,16 +344,20 @@ public class GooyoController : MonoBehaviour
             {
                 toRemove.Add(piece);
                 toRemove.UnionWith(adjacent);
-                Debug.Log("Match!");
             }
         }
+
+        this.combo += toRemove.Count - 2;
 
         foreach (Polyomino piece in toRemove)
         {
             this.gamePieces.Remove(piece);
             piece.removeFromGrid();
             Destroy(piece.gameObject);
+            this.score += this.combo * piece.getNumTiles();
         }
+
+        this.updateScore();
 
         return toRemove.Count > 0;
     }
@@ -389,8 +400,39 @@ public class GooyoController : MonoBehaviour
         return shouldFall;
     }
 
+    protected void updateScore()
+    {
+        this.scoreText.text = string.Format("{0:000000}", score);
+    }
+
     public void togglePause()
     {
         this.paused = !this.paused;
+        if (this.paused)
+        {
+            this.pauseMenu.SetActive(true);
+        }
+        else
+        {
+            this.pauseMenu.SetActive(false);
+        }
+    }
+
+    public void restart()
+    {
+        this.score = 0;
+        this.gameTick = 0f;
+        this.updateScore();
+        this.gameState = GameState.Spawn;
+        foreach (Polyomino polyomino in this.gamePieces)
+        {
+            Destroy(polyomino.gameObject);
+        }
+        this.gamePieces.Clear();
+        foreach (Polyomino polyomino in this.polyQueue)
+        {
+            Destroy(polyomino.gameObject);
+        }
+        this.generateNewQueue();
     }
 }
